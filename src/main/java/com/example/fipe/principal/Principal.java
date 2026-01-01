@@ -5,6 +5,7 @@ import com.example.fipe.service.ConverteDados;
 import com.example.fipe.service.consumoAPI;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Principal {
 
@@ -41,12 +42,17 @@ public class Principal {
 
         System.out.println("Digite um trecho do nome do veículo: ");
         var trechoVeiculo =  sc.nextLine();
-        Optional<Dado> modeloBuscado = modeloLista.modelos().stream()
-                .filter(m -> m.nome().toUpperCase().contains(trechoVeiculo.toUpperCase()))
-                .findFirst();
-        System.out.println(modeloBuscado);
 
-        endereco = endereco + modeloBuscado.get().codigo() + "/anos/";
+
+        List<Dado> modelosFiltrados = modeloLista.modelos().stream()
+                .filter(m -> m.nome().toUpperCase().contains(trechoVeiculo.toUpperCase()))
+                .collect(Collectors.toList());
+        modelosFiltrados.forEach(System.out::println);
+
+        System.out.println("Digite o codigo do modelo par buscar os valores de avaliação: ");
+        var codigoModelo =  sc.nextLine();
+
+        endereco = endereco + codigoModelo + "/anos/";
         var jsonAnos = consumoAPI.obterDados(endereco);
 
         List<Dado> dadoAnos =  converteDados.obterLista(jsonAnos, Dado.class);
